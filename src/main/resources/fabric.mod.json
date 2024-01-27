@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "map_album",
+  "version": "${version}",
+  "name": "MapAlbum",
+  "description": "Adds an item that allows players to easily store and view their map collections.",
+  "authors": [
+    "HyperPigeon"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/map_album/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.hyper_pigeon.map_album.client.MapAlbumClient"
+    ],
+    "main": [
+      "net.hyper_pigeon.map_album.MapAlbum"
+    ]
+  },
+  "mixins": [
+    "map_album.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.6",
+    "fabric": "*",
+    "minecraft": "1.20.1"
+  }
+}

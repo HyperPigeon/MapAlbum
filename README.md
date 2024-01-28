@@ -1,10 +1,9 @@
-![Map Album](https://github.com/HyperPigeon/MapAlbum/assets/58276133/bcf6fd9a-37e4-47d6-923c-69b599749694)
+![Map Album](https://cdn.modrinth.com/data/cached_images/5cefefc42117b9723fb759977834130790b577cf.png)
 
 [![Modrinth Downloads](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_64h.png)](https://modrinth.com/mod/map-album)
 [![youtube-singular](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/youtube-singular_64h.png)](https://www.youtube.com/@CyborgPigeon)
 [![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_64h.png)](https://github.com/HyperPigeon/MapAlbum)
 [![discord-plural](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-plural_64h.png)](https://discord.gg/hrYu4WGS)
-
 
 ## About
 This mod adds an item called the "Album" that allows players to easily store and view dozens of maps! 

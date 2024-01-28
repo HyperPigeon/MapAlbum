@@ -1,5 +1,9 @@
 ![Map Album](https://github.com/HyperPigeon/MapAlbum/assets/58276133/bcf6fd9a-37e4-47d6-923c-69b599749694)
 
+![Modrinth Downloads](https://img.shields.io/modrinth/dt/k040zVg5)
+![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCjmHO_5H9H0682zCEZjaVvQ)
+
+
 ## About
 This mod adds an item called the "Album" that allows players to easily store and view dozens of maps! 
 

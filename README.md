@@ -21,3 +21,9 @@ To store maps inside the Album, simply right-click with the item in your main ha
 To look at your maps, sneak + right-click to open up the display. 
 
 ![Viewing the maps inside the album](https://github.com/HyperPigeon/MapAlbum/assets/58276133/a7628313-6709-497b-acb0-c5eaa541d02e)
+
+<br>
+<center><i>Check out Kinetic Hosting for hassle-free, budget-friendly Minecraft servers!</i></center>
+<br>
+
+[![Kinetic Hosting Affliate Link for Cyborg Pigeon](https://i.imgur.com/OVfuXg1.png)](https://billing.kinetichosting.net/aff.php?aff=587)

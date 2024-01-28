@@ -1,7 +1,7 @@
 ![Map Album](https://github.com/HyperPigeon/MapAlbum/assets/58276133/bcf6fd9a-37e4-47d6-923c-69b599749694)
 
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/k040zVg5)](https://modrinth.com/mod/map-album)
-[![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCjmHO_5H9H0682zCEZjaVvQ)](https://www.youtube.com/channel/UCjmHO_5H9H0682zCEZjaVvQ)
+[![Modrinth Downloads](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_64h.png)](https://modrinth.com/mod/map-album)
+[![youtube-singular](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/youtube-singular_64h.png)](https://www.youtube.com/@CyborgPigeon)
 
 
 ## About

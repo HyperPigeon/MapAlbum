@@ -40,6 +40,7 @@ public class AlbumItem extends Item{
                 int id = FilledMapItem.getMapId(itemStack);
                 NbtCompound nbtCompound = new NbtCompound();
                 nbtCompound.putInt("id", id);
+                nbtCompound.putString("Name", itemStack.getName().getString());
                 nbtCompound.put("MapState", FilledMapItem.getMapState(id, world).writeNbt(new NbtCompound()));
                 nbtList.add(nbtCompound);
             }

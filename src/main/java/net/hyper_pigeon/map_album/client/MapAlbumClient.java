@@ -8,8 +8,6 @@ import net.hyper_pigeon.map_album.screens.album.AlbumScreen;
 import net.hyper_pigeon.map_album.screens.inventory.AlbumInventoryScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
-import net.minecraft.item.FilledMapItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -28,10 +26,10 @@ public class MapAlbumClient implements ClientModInitializer {
             NbtCompound nbtCompound = buf.readNbt();
             client.execute(() -> {
                 NbtList nbtList = nbtCompound.getList("MapInformation", NbtElement.COMPOUND_TYPE);
-                ArrayList<Pair<Integer, MapState>> pairArrayList = new ArrayList<>();
+                ArrayList<Pair<Pair<Integer, String>, MapState>> pairArrayList = new ArrayList<>();
                 for(int i = 0; i < nbtList.size(); ++i) {
                     NbtCompound mapInfoCompound = nbtList.getCompound(i);
-                    pairArrayList.add(new Pair<Integer, MapState>(mapInfoCompound.getInt("id"),
+                    pairArrayList.add(new Pair<Pair<Integer, String>, MapState>(new Pair<Integer, String>(mapInfoCompound.getInt("id"),mapInfoCompound.getString("Name")),
                             MapState.fromNbt(mapInfoCompound.getCompound("MapState"))));
                 }
                 MinecraftClient mc = MinecraftClient.getInstance();

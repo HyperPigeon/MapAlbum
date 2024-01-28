@@ -2,10 +2,7 @@
 # This does not make use of any caching as to ensure a clean build
 name: build-release
 
-on:
-  release:
-     types:
-       - published
+on: [ push ]
 
 jobs:
   build:

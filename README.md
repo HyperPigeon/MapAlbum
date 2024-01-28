@@ -1,8 +1,9 @@
-![Map Album](https://github.com/HyperPigeon/MapAlbum/assets/58276133/bcf6fd9a-37e4-47d6-923c-69b599749694)
+![Map Album](https://cdn.modrinth.com/data/cached_images/5cefefc42117b9723fb759977834130790b577cf.png)
 
-![Modrinth Downloads](https://img.shields.io/modrinth/dt/k040zVg5)
-![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCjmHO_5H9H0682zCEZjaVvQ)
-
+[![Modrinth Downloads](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_64h.png)](https://modrinth.com/mod/map-album)
+[![youtube-singular](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/youtube-singular_64h.png)](https://www.youtube.com/@CyborgPigeon)
+[![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_64h.png)](https://github.com/HyperPigeon/MapAlbum)
+[![discord-plural](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-plural_64h.png)](https://discord.gg/hrYu4WGS)
 
 ## About
 This mod adds an item called the "Album" that allows players to easily store and view dozens of maps! 
@@ -21,3 +22,9 @@ To store maps inside the Album, simply right-click with the item in your main ha
 To look at your maps, sneak + right-click to open up the display. 
 
 ![Viewing the maps inside the album](https://github.com/HyperPigeon/MapAlbum/assets/58276133/a7628313-6709-497b-acb0-c5eaa541d02e)
+
+<br>
+<center><i>Check out Kinetic Hosting for hassle-free, budget-friendly Minecraft servers!</i></center>
+<br>
+
+[![Kinetic Hosting Affliate Link for Cyborg Pigeon](https://i.imgur.com/OVfuXg1.png)](https://billing.kinetichosting.net/aff.php?aff=587)

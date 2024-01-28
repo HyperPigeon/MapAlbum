@@ -9,7 +9,7 @@
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/map_album/item/icon.png",
+  "icon": "assets/map_album/item/album.png",
   "environment": "*",
   "entrypoints": {
     "client": [

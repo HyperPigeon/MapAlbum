@@ -71,7 +71,7 @@ public class AlbumInventoryScreenHandler extends ScreenHandler {
 
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int index) {
+    public ItemStack transferSlot(PlayerEntity player, int index) {
         var itemStack = ItemStack.EMPTY;
         var slot = this.slots.get(index);
         if (slot.hasStack()) {
@@ -100,8 +100,8 @@ public class AlbumInventoryScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
-        super.onClosed(player);
+    public void close(PlayerEntity player) {
+        super.close(player);
         this.albumInv.onClose(player);
         player.getWorld().playSoundFromEntity(null, player, SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 0.5f, player.getRandom().nextFloat() * 0.1f + 0.9f);
     }

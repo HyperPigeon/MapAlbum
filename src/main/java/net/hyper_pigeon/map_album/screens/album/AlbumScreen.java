@@ -1,16 +1,20 @@
 package net.hyper_pigeon.map_album.screens.album;
 
-import net.minecraft.client.gui.DrawContext;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.map.MapState;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.List;
 
 public class AlbumScreen extends Screen {
@@ -33,7 +37,8 @@ public class AlbumScreen extends Screen {
     }
 
     protected void addCloseButton() {
-        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).dimensions(this.width / 2 - 100, 245, 200, 20).build());
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 245, 200, 20, ScreenTexts.DONE, button -> this.client.setScreen(null)));
+//        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).dimensions(this.width / 2 - 100, 245, 200, 20).build());
     }
 
     protected void addPageButtons() {
@@ -71,52 +76,54 @@ public class AlbumScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        this.renderBackground(ctx);
-        drawBackground(ctx,(this.width/2)- 90,(this.height/14));
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        this.renderBackground(matrices);
+        this.drawBackground(matrices,(this.width/2)- 90,(this.height/14));
         if(this.mapsInfo.size() > 0) {
             Pair<Pair<Integer, String>, MapState> mapInfo = this.mapsInfo.get(pageIndex);
             int mapId = mapInfo.getLeft().getLeft();
             String name = mapInfo.getLeft().getRight();
             MapState mapState = mapInfo.getRight();
 
-            ctx.getMatrices().push();
-            ctx.getMatrices().translate((this.width/2F)-(client.textRenderer.getWidth(name)/2F), 5F,0F);
-            ctx.getMatrices().scale(1.2F,1.2F,1.0F);
-            ctx.drawText(client.textRenderer, name, 0, 0, 0xFFFFFF, false);
-            ctx.getMatrices().pop();
+            matrices.push();
+            matrices.translate((this.width/2F)-(client.textRenderer.getWidth(name)/2F), 5F,0F);
+            matrices.scale(1.2F,1.2F,1.0F);
+            client.textRenderer.draw(matrices, name, 0, 0, 0xFFFFFF);
+            matrices.pop();
 
-            drawMap(ctx,mapId,mapState,(this.width/2) - 80,(this.height/14)+10,1.25F);
+            drawMap(matrices,mapId,mapState,(this.width/2) - 80,(this.height/14)+10,1.25F);
         }
         else {
             String text = "No maps :(";
-            ctx.getMatrices().push();
-            ctx.getMatrices().translate((this.width-client.textRenderer.getWidth(text))/2F - 10F, (this.height/13F)+30,0F);
-            ctx.getMatrices().scale(1.5F,1.5F,1.0F);
-            ctx.drawText(client.textRenderer, text, 0, 0, 0, false);
-            ctx.getMatrices().pop();
+            matrices.push();
+            matrices.translate((this.width-client.textRenderer.getWidth(text))/2F - 10F, (this.height/13F)+30,0F);
+            matrices.scale(1.5F,1.5F,1.0F);
+            client.textRenderer.draw(matrices,text,0,0,0);
+            matrices.pop();
         }
-        super.render(ctx, mouseX, mouseY, delta);
+        super.render(matrices, mouseX, mouseY, delta);
     }
 
     public boolean shouldPause() {
         return false;
     }
 
-    private void drawBackground(DrawContext context, int x, int y) {
-        context.getMatrices().push();
-        context.drawTexture(MAP_BACKGROUND_TEXTURE,x,y,0,0,180,180,180,180);
-        context.getMatrices().pop();
+    private void drawBackground(MatrixStack matrices, int x, int y) {
+        matrices.push();
+        RenderSystem.setShaderTexture(0, MAP_BACKGROUND_TEXTURE);
+        this.drawTexture(matrices,x,y,0,0,180,180,180,180);
+        matrices.pop();
     }
 
-    private void drawMap(DrawContext context, @Nullable Integer mapId, @Nullable MapState mapState, int x, int y, float scale) {
+    private void drawMap(MatrixStack matrices, @Nullable Integer mapId, @Nullable MapState mapState, int x, int y, float scale) {
         if (mapId != null && mapState != null) {
-            context.getMatrices().push();
-            context.getMatrices().translate((float)x, (float)y, 1.0F);
-            context.getMatrices().scale(scale, scale, 1.0F);
-            this.client.gameRenderer.getMapRenderer().draw(context.getMatrices(), context.getVertexConsumers(), mapId, mapState, true, 15728880);
-            context.draw();
-            context.getMatrices().pop();
+            matrices.push();
+            matrices.translate((double)x, (double)y, 1.0);
+            matrices.scale(scale, scale, 1.0F);
+            VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
+            this.client.gameRenderer.getMapRenderer().draw(matrices, immediate, mapId, mapState, true, 15728880);
+            immediate.draw();
+            matrices.pop();
         }
     }
 

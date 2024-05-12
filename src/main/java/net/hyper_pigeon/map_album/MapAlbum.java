@@ -1,16 +1,13 @@
 package net.hyper_pigeon.map_album;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.hyper_pigeon.map_album.items.AlbumItem;
 import net.hyper_pigeon.map_album.screens.inventory.AlbumInventoryScreenHandler;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public class MapAlbum implements ModInitializer {
 
@@ -19,9 +16,9 @@ public class MapAlbum implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        Registry.register(Registries.ITEM,new Identifier("map_album", "album"), ALBUM_ITEM);
-        ItemGroupEvents
-                .modifyEntriesEvent(ItemGroups.TOOLS)
-                .register((itemGroup) -> itemGroup.add(ALBUM_ITEM));
+        Registry.register(Registry.ITEM,new Identifier("map_album", "album"), ALBUM_ITEM);
+//        ItemGroupEvents
+//                .modifyEntriesEvent(ItemGroups.TOOLS)
+//                .register((itemGroup) -> itemGroup.add(ALBUM_ITEM));
     }
 }

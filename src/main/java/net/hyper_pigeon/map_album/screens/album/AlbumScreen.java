@@ -1,15 +1,24 @@
 package net.hyper_pigeon.map_album.screens.album;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
+import net.minecraft.client.render.MapRenderer;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.item.map.MapIcon;
 import net.minecraft.item.map.MapState;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
 import java.util.List;
 
@@ -74,7 +83,7 @@ public class AlbumScreen extends Screen {
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
         this.renderBackground(ctx);
         drawBackground(ctx,(this.width/2)- 90,(this.height/14));
-        if(this.mapsInfo.size() > 0) {
+        if(!this.mapsInfo.isEmpty()) {
             Pair<Pair<Integer, String>, MapState> mapInfo = this.mapsInfo.get(pageIndex);
             int mapId = mapInfo.getLeft().getLeft();
             String name = mapInfo.getLeft().getRight();
@@ -112,9 +121,9 @@ public class AlbumScreen extends Screen {
     private void drawMap(DrawContext context, @Nullable Integer mapId, @Nullable MapState mapState, int x, int y, float scale) {
         if (mapId != null && mapState != null) {
             context.getMatrices().push();
-            context.getMatrices().translate((float)x, (float)y, 1.0F);
-            context.getMatrices().scale(scale, scale, 1.0F);
-            this.client.gameRenderer.getMapRenderer().draw(context.getMatrices(), context.getVertexConsumers(), mapId, mapState, true, 15728880);
+            context.getMatrices().translate((float)x, (float)y, 0.0F);
+            context.getMatrices().scale(scale, scale, -1.0F);
+            this.client.gameRenderer.getMapRenderer().draw(context.getMatrices(), context.getVertexConsumers(), mapId, mapState, false, 15728880);
             context.draw();
             context.getMatrices().pop();
         }

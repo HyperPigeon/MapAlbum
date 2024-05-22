@@ -6,6 +6,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.MapRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -24,8 +25,11 @@ import java.util.List;
 
 public class AlbumScreen extends Screen {
     private static final Identifier MAP_BACKGROUND_TEXTURE = new Identifier("textures/map/map_background.png");
-    public final List<Pair<Pair<Integer, String>, MapState>> mapsInfo;
 
+    private static final Identifier MAP_ICONS_TEXTURE = new Identifier("textures/map/map_icons.png");
+    static final RenderLayer MAP_ICONS_RENDER_LAYER = RenderLayer.getText(MAP_ICONS_TEXTURE);
+    public final List<Pair<Pair<Integer, String>, MapState>> mapsInfo;
+    private boolean enablePlayerIcon = false;
     private PageTurnWidget nextPageButton;
     private PageTurnWidget previousPageButton;
 
@@ -39,10 +43,81 @@ public class AlbumScreen extends Screen {
     protected void init() {
         this.addCloseButton();
         this.addPageButtons();
+        this.addPlayerIconButton();
+    }
+
+    protected void drawPlayerIcon(DrawContext ctx,MapState mapState) {
+        if(enablePlayerIcon && !isPlayerOutOfBounds(this.client.player, mapState)) {
+            ctx.getMatrices().push();
+
+            Pair<Byte, Byte> pair = getPlayerIconCoords(this.client.player, mapState);
+            ctx.getMatrices().translate((((float) this.width /2) - 80) + ((float)pair.getLeft() / 2.0F + 64.0F)*1.25,(((float) this.height /14)+10) + ((float)pair.getRight() / 2.0F + 64.0F)*1.25, 100);
+            ctx.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(this.client.player.getYaw()));
+            ctx.getMatrices().scale(4.0F, 4.0F, 3.0F);
+            ctx.getMatrices().translate(-0.125F, 0.125F, 0.0F);;
+
+            byte b = MapIcon.Type.PLAYER.getId();
+            float g = (float)(b % 16) / 16.0F;
+            float h = (float)(b / 16) / 16.0F;
+            float l = (float)(b % 16 + 1) / 16.0F;
+            float m = (float)(b / 16 + 1) / 16.0F;
+
+            Matrix4f matrix4f2 = ctx.getMatrices().peek().getPositionMatrix();
+            VertexConsumer vertexConsumer2 = ctx.getVertexConsumers().getBuffer(MAP_ICONS_RENDER_LAYER);
+            vertexConsumer2.vertex(matrix4f2, -1.0F, 1.0F, 0).color(255, 255, 255, 255).texture(g, h).light(15728880).next();
+            vertexConsumer2.vertex(matrix4f2, 1.0F, 1.0F, 0).color(255, 255, 255, 255).texture(l, h).light(15728880).next();
+            vertexConsumer2.vertex(matrix4f2, 1.0F, -1.0F, 0).color(255, 255, 255, 255).texture(l, m).light(15728880).next();
+            vertexConsumer2.vertex(matrix4f2, -1.0F, -1.0F, 0).color(255, 255, 255, 255).texture(g, m).light(15728880).next();
+            ctx.getMatrices().pop();
+        }
+    }
+
+    protected boolean isPlayerOutOfBounds(ClientPlayerEntity playerEntity, MapState mapState) {
+        int i = 1 << mapState.scale;
+        float f = (float)(playerEntity.getX() - (double)mapState.centerX) / (float)i;
+        float g = (float)(playerEntity.getZ() - (double)mapState.centerZ) / (float)i;
+        if (Math.abs(f) < 320.0F && Math.abs(g) < 320.0F) {
+            return false;
+        }
+        return true;
+    }
+
+    protected Pair<Byte, Byte> getPlayerIconCoords(ClientPlayerEntity playerEntity, MapState mapState){
+        int i = 1 << mapState.scale;
+        float f = (float)(playerEntity.getX() - (double)mapState.centerX) / (float)i;
+        float g = (float)(playerEntity.getZ() - (double)mapState.centerZ) / (float)i;
+        byte b = (byte)((int)((double)(f * 2.0F) + 0.5));
+        byte c = (byte)((int)((double)(g * 2.0F) + 0.5));
+
+        if (f <= -63.0F) {
+            b = -128;
+        }
+
+        if (g <= -63.0F) {
+            c = -128;
+        }
+
+        if (f >= 63.0F) {
+            b = 127;
+        }
+
+        if (g >= 63.0F) {
+            c = 127;
+        }
+
+        return new Pair<>(b, c);
     }
 
     protected void addCloseButton() {
         this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).dimensions(this.width / 2 - 100, 245, 200, 20).build());
+    }
+
+    protected void addPlayerIconButton(){
+        this.addDrawableChild(ButtonWidget.
+                builder(Text.literal("Toggle Player Icon"), button -> {
+                    enablePlayerIcon = !enablePlayerIcon;
+                } ).
+                dimensions(this.width - 125, 10, 120, 20).build());
     }
 
     protected void addPageButtons() {
@@ -96,6 +171,8 @@ public class AlbumScreen extends Screen {
             ctx.getMatrices().pop();
 
             drawMap(ctx,mapId,mapState,(this.width/2) - 80,(this.height/14)+10,1.25F);
+            drawPlayerIcon(ctx,mapState);
+
         }
         else {
             String text = "No maps :(";

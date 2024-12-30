@@ -1,6 +1,8 @@
 package net.hyper_pigeon.map_album.screens.inventory;
 
 import net.hyper_pigeon.map_album.MapAlbum;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -8,24 +10,34 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class AlbumInventoryScreenHandler extends ScreenHandler {
 
     private final ItemStack album;
     public final Inventory albumInv = new SimpleInventory(54);
 
+    private PlayerInventory playerInventory;
+
+    public AlbumInventoryScreenHandler(int syncId, PlayerInventory playerInventory) {
+        this(syncId, playerInventory, MapAlbum.ALBUM_ITEM.getDefaultStack().copy());
+    }
+
     public AlbumInventoryScreenHandler(int syncId, PlayerInventory playerInventory, ItemStack album) {
         super(MapAlbum.ALBUM_INVENTORY_SCREEN_HANDLER, syncId);
         this.album = album;
+        this.playerInventory = playerInventory;
         int k;
         int j;
-        this.readNBT();
+        this.readNBT(playerInventory.player.getWorld());
         this.albumInv.onOpen(playerInventory.player);
         playerInventory.player.getWorld().playSoundFromEntity(null, playerInventory.player, SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 0.5f, playerInventory.player.getRandom().nextFloat() * 0.1f + 0.9f);
         for (j = 0; j < 6; ++j) {
@@ -49,10 +61,12 @@ public class AlbumInventoryScreenHandler extends ScreenHandler {
         }
     }
 
-    private void readNBT() {
+    private void readNBT(World world) {
         var stacks = DefaultedList.ofSize(54, ItemStack.EMPTY);
-        if (this.album.hasNbt() && this.album.getNbt() != null) {
-            Inventories.readNbt(this.album.getNbt(), stacks);
+        @Nullable var data = this.album.get(DataComponentTypes.CUSTOM_DATA);
+        if (data != null) {
+            NbtCompound nbtCompound = data.copyNbt();
+            Inventories.readNbt(nbtCompound, stacks,world.getRegistryManager());
             for (int i = 0; i < stacks.size(); i++) {
                 this.albumInv.setStack(i, stacks.get(i));
             }
@@ -60,13 +74,18 @@ public class AlbumInventoryScreenHandler extends ScreenHandler {
     }
 
 
-    private void writeNBT() {
+    private void writeNBT(World world) {
         var stacks = DefaultedList.ofSize(54, ItemStack.EMPTY);
+        @Nullable var data = this.album.get(DataComponentTypes.CUSTOM_DATA);
         for (int i = 0; i < stacks.size(); i++) {
             var item = this.albumInv.getStack(i);
             stacks.set(i, item);
         }
-        Inventories.writeNbt(this.album.getOrCreateNbt(), stacks, true);
+
+        NbtCompound nbtCompound = data != null ? data.copyNbt() : new NbtCompound();
+        Inventories.writeNbt(nbtCompound, stacks, world.getRegistryManager());
+        NbtComponent component = NbtComponent.of(nbtCompound);
+        album.set(DataComponentTypes.CUSTOM_DATA, component);
     }
 
 
@@ -108,7 +127,7 @@ public class AlbumInventoryScreenHandler extends ScreenHandler {
 
     @Override
     public void sendContentUpdates() {
-        this.writeNBT();
+        this.writeNBT(playerInventory.player.getWorld());
         super.sendContentUpdates();
     }
 

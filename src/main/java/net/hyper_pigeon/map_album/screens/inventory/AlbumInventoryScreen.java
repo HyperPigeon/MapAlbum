@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class AlbumInventoryScreen extends HandledScreen<AlbumInventoryScreenHandler> implements ScreenHandlerProvider<AlbumInventoryScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier("textures/gui/container/generic_54.png");
+    private static final Identifier TEXTURE = Identifier.of("textures/gui/container/generic_54.png");
 
     public AlbumInventoryScreen(AlbumInventoryScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -20,7 +20,7 @@ public class AlbumInventoryScreen extends HandledScreen<AlbumInventoryScreenHand
 
     @Override
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        this.renderBackground(ctx);
+        this.renderBackground(ctx, mouseX, mouseY, delta);
         super.render(ctx, mouseX, mouseY, delta);
         this.drawMouseoverTooltip(ctx, mouseX, mouseY);
     }

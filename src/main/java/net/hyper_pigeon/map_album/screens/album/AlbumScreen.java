@@ -1,7 +1,5 @@
 package net.hyper_pigeon.map_album.screens.album;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -10,13 +8,17 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.MapRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.item.map.MapIcon;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.component.type.MapIdComponent;
+import net.minecraft.item.map.MapDecoration;
+import net.minecraft.item.map.MapDecorationType;
+import net.minecraft.item.map.MapDecorationTypes;
 import net.minecraft.item.map.MapState;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -24,18 +26,18 @@ import org.joml.Matrix4f;
 import java.util.List;
 
 public class AlbumScreen extends Screen {
-    private static final Identifier MAP_BACKGROUND_TEXTURE = new Identifier("textures/map/map_background.png");
+    private static final Identifier MAP_BACKGROUND_TEXTURE =  Identifier.of("textures/map/map_background.png");
 
-    private static final Identifier MAP_ICONS_TEXTURE = new Identifier("textures/map/map_icons.png");
+    private static final Identifier MAP_ICONS_TEXTURE = Identifier.of("textures/map/map_icons.png");
     static final RenderLayer MAP_ICONS_RENDER_LAYER = RenderLayer.getText(MAP_ICONS_TEXTURE);
-    public final List<Pair<Pair<Integer, String>, MapState>> mapsInfo;
+    public final List<Pair<Pair<MapIdComponent, String>, MapState>> mapsInfo;
     private boolean enablePlayerIcon = false;
     private PageTurnWidget nextPageButton;
     private PageTurnWidget previousPageButton;
 
     private int pageIndex = 0;
 
-    public AlbumScreen(Text title, List<Pair<Pair<Integer, String>, MapState>> mapsInfo) {
+    public AlbumScreen(Text title, List<Pair<Pair<MapIdComponent, String>, MapState>> mapsInfo) {
         super(title);
         this.mapsInfo = mapsInfo;
     }
@@ -49,25 +51,24 @@ public class AlbumScreen extends Screen {
     protected void drawPlayerIcon(DrawContext ctx,MapState mapState) {
         if(enablePlayerIcon && !isPlayerOutOfBounds(this.client.player, mapState)) {
             ctx.getMatrices().push();
-
             Pair<Byte, Byte> pair = getPlayerIconCoords(this.client.player, mapState);
             ctx.getMatrices().translate((((float) this.width /2) - 80) + ((float)pair.getLeft() / 2.0F + 64.0F)*1.25,(((float) this.height /14)+10) + ((float)pair.getRight() / 2.0F + 64.0F)*1.25, 100);
             ctx.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(this.client.player.getYaw()));
             ctx.getMatrices().scale(4.0F, 4.0F, 3.0F);
-            ctx.getMatrices().translate(-0.125F, 0.125F, 0.0F);;
+            ctx.getMatrices().translate(-0.125F, 0.125F, 0.0F);
 
-            byte b = MapIcon.Type.PLAYER.getId();
-            float g = (float)(b % 16) / 16.0F;
-            float h = (float)(b / 16) / 16.0F;
-            float l = (float)(b % 16 + 1) / 16.0F;
-            float m = (float)(b / 16 + 1) / 16.0F;
+            float h = 0.625F;
+            float l = 0.25F;
+            float m = 0.75F;
+            float n = 0.375F;
 
             Matrix4f matrix4f2 = ctx.getMatrices().peek().getPositionMatrix();
-            VertexConsumer vertexConsumer2 = ctx.getVertexConsumers().getBuffer(MAP_ICONS_RENDER_LAYER);
-            vertexConsumer2.vertex(matrix4f2, -1.0F, 1.0F, 0).color(255, 255, 255, 255).texture(g, h).light(15728880).next();
-            vertexConsumer2.vertex(matrix4f2, 1.0F, 1.0F, 0).color(255, 255, 255, 255).texture(l, h).light(15728880).next();
-            vertexConsumer2.vertex(matrix4f2, 1.0F, -1.0F, 0).color(255, 255, 255, 255).texture(l, m).light(15728880).next();
-            vertexConsumer2.vertex(matrix4f2, -1.0F, -1.0F, 0).color(255, 255, 255, 255).texture(g, m).light(15728880).next();
+            VertexConsumer vertexConsumer2 =  ctx.getVertexConsumers().getBuffer(RenderLayer.getText(Identifier.of("minecraft","textures/atlas/map_decorations.png")));
+            vertexConsumer2.vertex(matrix4f2, -1.0F, 1.0F, 0).color(Colors.WHITE).texture(h, l).light(15728880);
+            vertexConsumer2.vertex(matrix4f2, 1.0F, 1.0F, 0).color(Colors.WHITE).texture(m, l).light(15728880);
+            vertexConsumer2.vertex(matrix4f2, 1.0F, -1.0F, 0).color(Colors.WHITE).texture(m, n).light(15728880);
+            vertexConsumer2.vertex(matrix4f2, -1.0F, -1.0F, 0).color(Colors.WHITE).texture(h, n).light(15728880);
+
             ctx.getMatrices().pop();
         }
     }
@@ -156,11 +157,11 @@ public class AlbumScreen extends Screen {
 
     @Override
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-        this.renderBackground(ctx);
+        super.render(ctx, mouseX, mouseY, delta);
         drawBackground(ctx,(this.width/2)- 90,(this.height/14));
         if(!this.mapsInfo.isEmpty()) {
-            Pair<Pair<Integer, String>, MapState> mapInfo = this.mapsInfo.get(pageIndex);
-            int mapId = mapInfo.getLeft().getLeft();
+            Pair<Pair<MapIdComponent, String>, MapState> mapInfo = this.mapsInfo.get(pageIndex);
+            MapIdComponent mapId = mapInfo.getLeft().getLeft();
             String name = mapInfo.getLeft().getRight();
             MapState mapState = mapInfo.getRight();
 
@@ -182,7 +183,6 @@ public class AlbumScreen extends Screen {
             ctx.drawText(client.textRenderer, text, 0, 0, 0, false);
             ctx.getMatrices().pop();
         }
-        super.render(ctx, mouseX, mouseY, delta);
     }
 
     public boolean shouldPause() {
@@ -195,12 +195,12 @@ public class AlbumScreen extends Screen {
         context.getMatrices().pop();
     }
 
-    private void drawMap(DrawContext context, @Nullable Integer mapId, @Nullable MapState mapState, int x, int y, float scale) {
-        if (mapId != null && mapState != null) {
+    private void drawMap(DrawContext context, @Nullable MapIdComponent mapIdComponent, @Nullable MapState mapState, int x, int y, float scale) {
+        if (mapIdComponent != null && mapState != null) {
             context.getMatrices().push();
             context.getMatrices().translate((float)x, (float)y, 0.0F);
             context.getMatrices().scale(scale, scale, -1.0F);
-            this.client.gameRenderer.getMapRenderer().draw(context.getMatrices(), context.getVertexConsumers(), mapId, mapState, false, 15728880);
+            this.client.gameRenderer.getMapRenderer().draw(context.getMatrices(), context.getVertexConsumers(), mapIdComponent, mapState, false, 15728880);
             context.draw();
             context.getMatrices().pop();
         }

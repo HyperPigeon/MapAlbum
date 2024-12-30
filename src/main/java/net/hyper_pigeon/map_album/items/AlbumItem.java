@@ -1,9 +1,10 @@
 package net.hyper_pigeon.map_album.items;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.hyper_pigeon.map_album.networking.MapAlbumNetworkingConstants;
+import net.hyper_pigeon.map_album.networking.MapStatePayload;
 import net.hyper_pigeon.map_album.screens.inventory.AlbumInventoryScreenHandler;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -13,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,16 +32,16 @@ public class AlbumItem extends Item{
 
     public NbtCompound writeMapStatesToNbt(NbtCompound albumNbt, World world){
         var mapStacks = DefaultedList.ofSize(54, ItemStack.EMPTY);
-        Inventories.readNbt(albumNbt,mapStacks);
+        Inventories.readNbt(albumNbt,mapStacks, world.getRegistryManager());
         NbtList nbtList = new NbtList();
         for(int i = 0; i < mapStacks.size(); ++i) {
             ItemStack itemStack = mapStacks.get(i);
             if (itemStack.isOf(Items.FILLED_MAP)) {
-                int id = FilledMapItem.getMapId(itemStack);
+                MapIdComponent mapIdComponent = itemStack.get(DataComponentTypes.MAP_ID);
                 NbtCompound nbtCompound = new NbtCompound();
-                nbtCompound.putInt("id", id);
+                nbtCompound.putInt("id", mapIdComponent.id());
                 nbtCompound.putString("Name", itemStack.getName().getString());
-                nbtCompound.put("MapState", FilledMapItem.getMapState(id, world).writeNbt(new NbtCompound()));
+                nbtCompound.put("MapState", FilledMapItem.getMapState(mapIdComponent, world).writeNbt(new NbtCompound(),world.getRegistryManager()));
                 nbtList.add(nbtCompound);
             }
         }
@@ -57,9 +57,14 @@ public class AlbumItem extends Item{
         var stack = user.getStackInHand(hand);
         if (!world.isClient) {
             if(user.isSneaking()) {
-                PacketByteBuf packetByteBuf = PacketByteBufs.create();
-                packetByteBuf.writeNbt(writeMapStatesToNbt(stack.getOrCreateNbt(),world));
-                ServerPlayNetworking.send((ServerPlayerEntity) user, MapAlbumNetworkingConstants.SEND_MAP_STATE,packetByteBuf);
+                @Nullable var data = stack.get(DataComponentTypes.CUSTOM_DATA);
+                if (data != null) {
+                    NbtCompound nbtCompound = writeMapStatesToNbt(data.copyNbt(), world);
+//                    NbtComponent component = NbtComponent.of(nbtCompound);
+//                    stack.set(DataComponentTypes.CUSTOM_DATA, component);
+                    MapStatePayload createMapStatePayload = new MapStatePayload(nbtCompound);
+                    ServerPlayNetworking.send((ServerPlayerEntity) user, createMapStatePayload);
+                }
             }
             else {
                 this.openMenu((ServerPlayerEntity) user, new NamedScreenHandlerFactory() {

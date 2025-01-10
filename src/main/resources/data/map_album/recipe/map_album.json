@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "map_album:album",
+    "id": "map_album:album",
     "count": 1
   }
 }

@@ -2,7 +2,9 @@ package net.hyper_pigeon.map_album;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.hyper_pigeon.map_album.items.AlbumItem;
+import net.hyper_pigeon.map_album.networking.MapStatePayload;
 import net.hyper_pigeon.map_album.screens.inventory.AlbumInventoryScreenHandler;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -19,6 +21,7 @@ public class MapAlbum implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        PayloadTypeRegistry.playS2C().register(MapStatePayload.PACKET_ID, MapStatePayload.PACKET_CODEC);
         Registry.register(Registries.ITEM,Identifier.of("map_album", "album"), ALBUM_ITEM);
         ItemGroupEvents
                 .modifyEntriesEvent(ItemGroups.TOOLS)

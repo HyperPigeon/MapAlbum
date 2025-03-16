@@ -23,7 +23,6 @@ public class MapAlbumClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         HandledScreens.register(MapAlbum.ALBUM_INVENTORY_SCREEN_HANDLER, AlbumInventoryScreen::new);
-        PayloadTypeRegistry.playS2C().register(MapStatePayload.PACKET_ID, MapStatePayload.PACKET_CODEC);
         ClientPlayNetworking.registerGlobalReceiver(MapStatePayload.PACKET_ID, (payload, context) -> {
             var client = context.client();
             NbtCompound nbtCompound = payload.imageNBT();
